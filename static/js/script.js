@@ -11,6 +11,7 @@ const closeBtn = document.querySelectorAll(".closeBtn");
 const nameInput = document.getElementById("Name");
 const lastNameInput = document.getElementById("lastName");
 const passwordInput = document.getElementById("password");
+const link = document.getElementById("link").value;
 let listEl = [];
 function addTask() {
   const list = document.createElement("li");
@@ -47,7 +48,7 @@ async function json() {
     console.log(1);
     const data = { tasks: listEl };
     try {
-    const response = await fetch("https://undrdsk0m.pythonanywhere.com/submit", {
+    const response = await fetch(`"${site}:8000/submit`, {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
