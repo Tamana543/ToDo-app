@@ -11,8 +11,25 @@ const closeBtn = document.querySelectorAll(".closeBtn");
 const nameInput = document.getElementById("Name");
 const lastNameInput = document.getElementById("lastName");
 const passwordInput = document.getElementById("password");
-const link = document.getElementById("link").value;
+
 let listEl = [];
+function getCookie(name) {
+  let value = null;
+  if (document.cookie) {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+      if (cookie.trim().startsWith(name + '=')) {
+        value = decodeURIComponent(cookie.trim().substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return value;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+
 function addTask() {
   const list = document.createElement("li");
   list.textContent = taskInput.value;
@@ -48,20 +65,14 @@ async function json() {
     console.log(1);
     const data = { tasks: listEl };
     try {
-    const response = await fetch(`"${site}:8000/submit`, {
+    fetch(`/submit/`, {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
+        'X-CSRFToken': csrftoken
         },
         body: JSON.stringify(data),
     });
-
-    if (!response.ok) {
-        throw new Error("Network response was not ok");
-    }
-
-    const result = await response.json();
-    console.log("Data sent successfully:", result);
     } catch (error) {
     console.error("Error sending data:", error);
     }

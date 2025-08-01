@@ -21,6 +21,6 @@ urlpatterns = [
     path('', views.mainpage_r, name="home"),
     path('signin/', views.signin, name="signin"),
     path('signup/', views.signup, name="signup"),
-    path('submit/', views.submit_api.as_view(), name="todo_create"),
+    path('submit/', views.submit.as_view(), name="todo_create"),
     
 ] 

@@ -6,15 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="A to-do list application" />
     <title>To-Do List</title>
-    <link rel="stylesheet" href="{% static "css/style.css" %}" />
-    <script defer src="{% static "js/script.js" %}"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <script defer src='{% static "js/script.js" %}'></script>
   </head>
 
   <body class="flex">
-    <input type="hidden" id="link" value="{{link}}">
     <div class="container">
       {% if user.is_authenticated %}
-      <p></p>
+      <p>Ticked</p>
       {% else %}
       <div class="userBtns">
         <button class="log_in">Log In</button>
