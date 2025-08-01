@@ -63,10 +63,9 @@ body {
     color: #999;
   }
   .done {
-    border-radius: 50%;
+    border-radius: 40%;
     position: absolute;
-    left: 20px;
-    bottom: 63px;
+    left: 0.5vw;
     padding: 6px 8px 1px 8px;
     font-size: 17px;
   

@@ -58,7 +58,12 @@ def signin(request):
 class submit(APIView):
     def post(self, request):
         if request.user.is_authenticated:
-            body = request.data['tasks'][::-1][0]
+            body = request.data
             Todo.objects.create(user=request.user, name=body)
 
         return Response({"status": 200})
+
+class checked(APIView):
+    def post(self, request):
+        if request.user.is_authenticated:
+            pass

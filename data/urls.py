@@ -22,5 +22,6 @@ urlpatterns = [
     path('signin/', views.signin, name="signin"),
     path('signup/', views.signup, name="signup"),
     path('submit/', views.submit.as_view(), name="todo_create"),
+    path('done/', views.checked.as_view(), name="todo_checked")
     
 ] 

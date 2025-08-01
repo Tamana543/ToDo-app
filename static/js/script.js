@@ -11,8 +11,8 @@ const closeBtn = document.querySelectorAll(".closeBtn");
 const nameInput = document.getElementById("Name");
 const lastNameInput = document.getElementById("lastName");
 const passwordInput = document.getElementById("password");
+const isAuthenticated = document.getElementById("authenticated").value
 
-let listEl = [];
 function getCookie(name) {
   let value = null;
   if (document.cookie) {
@@ -29,74 +29,62 @@ function getCookie(name) {
 
 const csrftoken = getCookie('csrftoken');
 
-
-function addTask() {
-  const list = document.createElement("li");
-  list.textContent = taskInput.value;
-
-  list.addEventListener("click", function () {
-    list.classList.toggle("completed");
-  });
-  listEl.push(list.textContent);
-  const deleteButton = document.createElement("button");
-  deleteButton.textContent = "√";
-  deleteButton.classList.add("done");
-  deleteButton.addEventListener("click", function () {
-    list.remove();
-  });
-
-  list.appendChild(deleteButton);
-  taskInput.value ? taskList.appendChild(list) : alert("Fill the input please");
-
-  taskInput.value = "";
-  setLocalStorage();
-  getLocalStorage();
-  json();
+if (isAuthenticated == false){
+  const task = JSON.parse(localStorage.getItem("list")) || []
+  const list = document.getElementById("taskList");
+  list.innerHTML = `<li>${task}<button class="done">√</button></li>` + list.innerHTML;
 }
-function setLocalStorage() {
-  localStorage.setItem("list", JSON.stringify(listEl));
-}
+
 function getLocalStorage() {
-  const data = JSON.parse(localStorage.getItem("list")) || [];
+  const data = JSON.parse(localStorage.getItem("list")) || []
   if (!data) return;
 }
 
-async function json() {
+console.log(isAuthenticated);
+async function upload() {
     console.log(1);
-    const data = { tasks: listEl };
-    try {
-    fetch(`/submit/`, {
-        method: "POST",
-        headers: {
-        "Content-Type": "application/json",
-        'X-CSRFToken': csrftoken
-        },
-        body: JSON.stringify(data),
-    });
-    } catch (error) {
-    console.error("Error sending data:", error);
+    let task = document.getElementById("taskInput").value
+    document.getElementById("taskInput").value = "";
+    if (isAuthenticated == true){
+      console.log(2);
+      try {
+        let response = fetch(`/submit/`, {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify(task),
+        });
+      } 
+      catch (error) {
+        console.error("Error sending data:", error);
+      }
     }
+    else{
+      console.log(3);
+      localStorage.setItem("list", task);
+    }
+    const list = document.getElementById("taskList");
+    list.innerHTML = `<li>${task}<button class="done">√</button></li>` + list.innerHTML;
 }
 
 logInBtn.addEventListener("click", () => {
   logInWindow.classList.remove("hide");
   container.style.display = "none";
 });
+
 signUpBtn.addEventListener("click", () => {
   signUpWindow.classList.remove("hide");
   container.style.display = "none";
 });
+
 closeBtn.forEach((ele) => {
   ele.addEventListener("click", () => {
     logInWindow.classList.add("hide");
     signUpWindow.classList.add("hide");
     container.style.display = "block";
   });
-});
-document.addEventListener("keypress", function (event) {
-  if (event.key === "Enter") {
-    addTask();
-  }
 });
 
 console.log("updated");
