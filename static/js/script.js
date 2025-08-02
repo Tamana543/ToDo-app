@@ -29,24 +29,18 @@ function getCookie(name) {
 
 const csrftoken = getCookie('csrftoken');
 
-if (isAuthenticated == false){
-  const task = JSON.parse(localStorage.getItem("list")) || []
+if (isAuthenticated == "false"){
+  const cachedTask = JSON.parse(localStorage.getItem("list"));
   const list = document.getElementById("taskList");
-  list.innerHTML = `<li>${task}<button class="done">√</button></li>` + list.innerHTML;
+  cachedTask.forEach(task => {
+  list.innerHTML += `<li>${task}<button class="done">√</button></li>` ;
+  });
 }
 
-function getLocalStorage() {
-  const data = JSON.parse(localStorage.getItem("list")) || []
-  if (!data) return;
-}
-
-console.log(isAuthenticated);
 async function upload() {
-    console.log(1);
     let task = document.getElementById("taskInput").value
     document.getElementById("taskInput").value = "";
-    if (isAuthenticated == true){
-      console.log(2);
+    if (isAuthenticated == "true"){
       try {
         let response = fetch(`/submit/`, {
             method: "POST",
@@ -61,12 +55,16 @@ async function upload() {
         console.error("Error sending data:", error);
       }
     }
-    else{
-      console.log(3);
-      localStorage.setItem("list", task);
+    else if (isAuthenticated == "false"){
+      let list = [task]; 
+      const datacache = JSON.parse(localStorage.getItem("list"));
+      if (datacache != null){
+        list = list.concat(datacache);
+      }
+      localStorage.setItem("list", JSON.stringify(list));
     }
-    const list = document.getElementById("taskList");
-    list.innerHTML = `<li>${task}<button class="done">√</button></li>` + list.innerHTML;
+    const tasks = document.getElementById("taskList");
+    tasks.innerHTML = `<li>${task}<button class="done">√</button></li>` + tasks.innerHTML;
 }
 
 logInBtn.addEventListener("click", () => {
