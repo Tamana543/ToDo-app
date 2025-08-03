@@ -29,11 +29,20 @@ function getCookie(name) {
 
 const csrftoken = getCookie('csrftoken');
 
+function caching(task) {
+    let list = [task]; 
+    const cacheddata = JSON.parse(localStorage.getItem("list"));
+    if (cacheddata != null){
+      list = list.concat(cacheddata);
+    }
+    localStorage.setItem("list", JSON.stringify(list));
+}
+
 if (isAuthenticated == "false"){
   const cachedTask = JSON.parse(localStorage.getItem("list"));
   const list = document.getElementById("taskList");
   cachedTask.forEach(task => {
-  list.innerHTML += `<li>${task}<button class="done">√</button></li>` ;
+    list.innerHTML += `<li>${task}<button class="done">√</button></li>` ;
   });
 }
 
@@ -52,19 +61,24 @@ async function upload() {
         });
       } 
       catch (error) {
+        caching(task);
         console.error("Error sending data:", error);
       }
     }
     else if (isAuthenticated == "false"){
-      let list = [task]; 
-      const datacache = JSON.parse(localStorage.getItem("list"));
-      if (datacache != null){
-        list = list.concat(datacache);
-      }
-      localStorage.setItem("list", JSON.stringify(list));
+      caching(task);
     }
     const tasks = document.getElementById("taskList");
     tasks.innerHTML = `<li>${task}<button class="done">√</button></li>` + tasks.innerHTML;
+}
+
+async function checked() {
+  if (isAuthenticated == "true"){
+    null;
+  }
+  else if (isAuthenticated == "false"){
+
+  }
 }
 
 logInBtn.addEventListener("click", () => {
