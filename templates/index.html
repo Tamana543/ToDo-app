@@ -24,7 +24,7 @@
       <h1>Your List</h1>
 
       <input type="text" id="taskInput" placeholder="Add a new task" onkeydown="if (event.key == 'Enter'){upload()}" />
-      <button onclick="upload()">Add Task</button>
+      <button onclick="upload()">Add Task </button>
       <ul id="taskList">
         {% for task in todoThings %}
           <li id="{{ forloop.counter }}">{{ task.name }}
