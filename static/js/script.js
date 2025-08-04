@@ -35,19 +35,24 @@ function caching(task) {
     if (cacheddata != null){
       list = list.concat(cacheddata);
     }
+    const index = list.indexOf(task)
     localStorage.setItem("list", JSON.stringify(list));
-}
+    return index;
+  }
 
 if (isAuthenticated == "false"){
   const cachedTask = JSON.parse(localStorage.getItem("list"));
   const list = document.getElementById("taskList");
+  list.innerHTML = `<li>Sign Up/In :)</li>`;
   cachedTask.forEach(task => {
-    list.innerHTML += `<li>${task}<button class="done">√</button></li>` ;
+    let index = cachedTask.indexOf(task);
+    list.innerHTML += `<li id="${index}">${task}<button onclick="checked(this)" class="done" value="${index}">√</button></li>` ;
   });
 }
 
 async function upload() {
     let task = document.getElementById("taskInput").value
+    let index;
     document.getElementById("taskInput").value = "";
     if (isAuthenticated == "true"){
       try {
@@ -57,28 +62,45 @@ async function upload() {
             "Content-Type": "application/json",
             'X-CSRFToken': csrftoken
             },
-            body: JSON.stringify(task),
+            body: JSON.stringify({ task: task}),
         });
       } 
       catch (error) {
-        caching(task);
         console.error("Error sending data:", error);
+        index = caching(task);
       }
     }
     else if (isAuthenticated == "false"){
-      caching(task);
+      index = caching(task);
     }
     const tasks = document.getElementById("taskList");
-    tasks.innerHTML = `<li>${task}<button class="done">√</button></li>` + tasks.innerHTML;
+    tasks.innerHTML = `<li id="${index}">${task}<button onclick="checked(this)" class="done" value="${index}">√</button></li>` + tasks.innerHTML;
 }
 
-async function checked() {
+async function checked(element) {
+  const that_task = document.getElementById(element.value)
   if (isAuthenticated == "true"){
-    null;
+    try {
+      let response = fetch(`/done/`, {
+          method: "POST",
+          headers: {
+          "Content-Type": "application/json",
+          'X-CSRFToken': csrftoken
+          },
+          body: JSON.stringify({ task: that_task.value}),
+      });
+    } 
+    catch (error) {
+      isAuthenticated = false;
+      console.error("Error sending data:", error);
+    }
   }
   else if (isAuthenticated == "false"){
-
+    const cacheddata = JSON.parse(localStorage.getItem("list"));
+    cacheddata.splice(element.value, 1);
+    localStorage.setItem("list", JSON.stringify(cacheddata));
   }
+  that_task.parentElement.removeChild(that_task);
 }
 
 logInBtn.addEventListener("click", () => {

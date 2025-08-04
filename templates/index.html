@@ -13,7 +13,7 @@
   <body class="flex">
     <div class="container">
       {% if user.is_authenticated %}
-      <p id="authenticated" value="true">Ticked</p>
+      <input type="hidden" id="authenticated" value="true">
       {% else %}
       <input type="hidden" id="authenticated" value="false">
       <div class="userBtns">
@@ -27,7 +27,9 @@
       <button onclick="upload()">Add Task</button>
       <ul id="taskList">
         {% for task in todoThings %}
-        <li>{{ task.name }} <button class="done">√</button></li>
+          <li id="{{ forloop.counter }}">{{ task.name }}
+            <button onclick="checked(this)" class="done" value="{{ forloop.counter }}">√</button>
+          </li>
         {% endfor %} 
       </ul>
     </div>
