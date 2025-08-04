@@ -87,7 +87,7 @@ async function checked(element) {
           "Content-Type": "application/json",
           'X-CSRFToken': csrftoken
           },
-          body: JSON.stringify({ task: that_task.value}),
+          body: JSON.stringify({ task: that_task.id }),
       });
     } 
     catch (error) {
