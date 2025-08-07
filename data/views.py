@@ -1,12 +1,16 @@
 from django.shortcuts import render, HttpResponse, redirect
 from rest_framework.response import Response
 from django.contrib.auth.models import User
+from captchaSaz import *
 from rest_framework.views import APIView
 from django.contrib import auth
 from .models import Todo
+import time
 import json
+import os
 
 def mainpage_r(request):
+    captcha_img, captcha_txt = generate()
     todoThings = None
     if request.user.is_authenticated:
         user = request.user
@@ -66,3 +70,18 @@ class checked(APIView):
             taskObject.delete()
 
         return Response({"status": 200})
+    
+class captcha(APIView):
+    def post(self, request):
+        for dirpath, dirnames, filenames in os.walk("./static/captcha_imgs/"):
+            for filename in filenames:
+                os.remove(dirpath + filename)
+        if not request.user.is_authenticated:
+            captcha_img, captcha_txt = generate()
+            tt = str(time.time()).replace('.', '')
+            print(tt)
+            captcha_img.save(f"./static/captcha_imgs/captcha-{tt}.jpg")
+            
+            return Response({"status": 202, "captcha_url": f"captcha-{tt}.jpg"})
+        return Response({"status": 403})
+    

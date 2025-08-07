@@ -7,7 +7,7 @@
     <meta name="description" content="A to-do list application" />
     <title>To-Do List</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-    <script defer src='{% static "js/script.js" %}'></script>
+     <script defer src='{% static "js/script.js" %}'></script>
   </head>
 
   <body class="flex">
@@ -36,7 +36,7 @@
     {% if user.is_authenticated %}
     <p></p>
     {% else %}
-    <div class="window log_in-window hide">
+    <div class="window log_window hide">
       <div class="closeBtn">X</div>
       <form method="POST" action="{% url 'signin' %}" class="flex">
         {% csrf_token %}
@@ -53,7 +53,7 @@
       </form>
     </div>
 
-    <div class="window sign_up-window hide">
+    <div class="window sign_window hide">
       <div class="closeBtn">X</div>
       <form method="POST" action="{% url 'signup' %}" class="flex">
         {% csrf_token %}
@@ -66,6 +66,14 @@
             <label for="password" class="last_name-label">Password</label>
             <input type="password" name="password" id="password" required />
         </div>
+        <div class="last_name flex">
+            <label for="password" class="last_name-label">password again</label>
+            <input type="password" name="password" id="password" required />
+        </div>
+        <div>
+          <div class="captcha"></div>
+          <input type="text" name="captcha">
+        </div>
         <button type="submit" class="submit">Submit</button>
     </form>
     
@@ -73,5 +81,5 @@
     {% endif %}
     <ul>
     </ul>
-  </body>
+   </body>
 </html>

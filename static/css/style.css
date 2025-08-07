@@ -125,6 +125,11 @@ body {
   .submit {
     margin-top: 10%;
   }
+  .captcha_img{
+    width: 17vw;
+    height: 22vh;
+    border-style: double;
+  }
   @media (max-width: 500px) {
     h1 {
       margin-top: 13%;

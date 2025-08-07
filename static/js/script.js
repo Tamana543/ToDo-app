@@ -1,17 +1,19 @@
 "use strict";
 const taskInput = document.getElementById("taskInput");
 const taskList = document.getElementById("taskList");
-const logInBtn = document.querySelector(".log_in");
-const signUpBtn = document.querySelector(".sign_up");
 const container = document.querySelector(".container");
 const submit = document.querySelectorAll(".submit");
-const logInWindow = document.querySelector(".log_in-window");
-const signUpWindow = document.querySelector(".sign_up-window");
+const logInWindow = document.querySelector(".log_window");
+const signUpWindow = document.querySelector(".sign_window");
 const closeBtn = document.querySelectorAll(".closeBtn");
 const nameInput = document.getElementById("Name");
 const lastNameInput = document.getElementById("lastName");
 const passwordInput = document.getElementById("password");
-const isAuthenticated = document.getElementById("authenticated").value
+const isAuthenticated = document.getElementById("authenticated").value;
+const logInBtn = document.querySelector(".log_in");
+const signUpBtn = document.querySelector(".sign_up");
+const captcha = document.querySelector(".captcha")
+
 
 function getCookie(name) {
   let value = null;
@@ -25,7 +27,7 @@ function getCookie(name) {
     }
   }
   return value;
-}
+};
 
 const csrftoken = getCookie('csrftoken');
 
@@ -38,7 +40,7 @@ function caching(task) {
     const index = list.indexOf(task)
     localStorage.setItem("list", JSON.stringify(list));
     return index;
-  }
+};
 
 if (isAuthenticated == "false"){
   const cachedTask = JSON.parse(localStorage.getItem("list"));
@@ -48,7 +50,7 @@ if (isAuthenticated == "false"){
     let index = cachedTask.indexOf(task);
     list.innerHTML += `<li id="${index}">${task}<button onclick="checked(this)" class="done" value="${index}">√</button></li>` ;
   });
-}
+};
 
 async function upload() {
     let task = document.getElementById("taskInput").value
@@ -56,7 +58,7 @@ async function upload() {
     document.getElementById("taskInput").value = "";
     if (isAuthenticated == "true"){
       try {
-        let response = fetch(`/submit/`, {
+        let response = await fetch(`/submit/`, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -75,13 +77,13 @@ async function upload() {
     }
     const tasks = document.getElementById("taskList");
     tasks.innerHTML = `<li id="${index}">${task}<button onclick="checked(this)" class="done" value="${index}">√</button></li>` + tasks.innerHTML;
-}
+};
 
 async function checked(element) {
   const that_task = document.getElementById(element.value)
   if (isAuthenticated == "true"){
     try {
-      let response = fetch(`/done/`, {
+      let response = await fetch(`/done/`, {
           method: "POST",
           headers: {
           "Content-Type": "application/json",
@@ -101,19 +103,48 @@ async function checked(element) {
     localStorage.setItem("list", JSON.stringify(cacheddata));
   }
   that_task.parentElement.removeChild(that_task);
-}
+};
 
-logInBtn.addEventListener("click", () => {
+async function setCaptcha() {
+  console.log(1);
+  if (isAuthenticated == "false"){
+    console.log(2);
+    try {
+      let captcha_link = await fetch(`/captcha/`, {
+          method: "POST",
+          headers: {
+          "Content-Type": "application/json",
+          'X-CSRFToken': csrftoken
+          },
+      });
+     
+      let data = await captcha_link.json();
+      console.log("Captcha data:", data.captcha_url);
+
+      captcha.innerHTML = `<img src="/static/captcha_imgs/${data.captcha_url}" alt="Captcha">`;
+
+    }
+    catch (error) {
+      console.error("Error sending data:", error);
+    }
+    captcha.innerHTML = f`<img src="${captcha_link}">`;
+  }
+};
+
+console.log(logInBtn, signUpBtn);
+
+logInBtn.onclick = function(){
   logInWindow.classList.remove("hide");
   container.style.display = "none";
-});
+};
 
-signUpBtn.addEventListener("click", () => {
+signUpBtn.onclick = function(){
+  setCaptcha();
   signUpWindow.classList.remove("hide");
   container.style.display = "none";
-});
+};
 
-closeBtn.forEach((ele) => {
+closeBtn.forEach(function(ele) {
   ele.addEventListener("click", () => {
     logInWindow.classList.add("hide");
     signUpWindow.classList.add("hide");
