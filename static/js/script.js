@@ -108,7 +108,20 @@ async function checked(element) {
 async function setCaptcha() {
   console.log(1);
   if (isAuthenticated == "false"){
-    console.log(2);
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ';
+    let result = '';
+    for (let i = 0; i < 10; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters[randomIndex];
+    }
+    const RESULT = result;  
+
+    console.log(result);
+    let expires = "";
+    const date = new Date();
+    date.setTime(date.getTime() + 1 * 24 * 60 * 60 * 1000);
+    expires = "; expires=" + date.toUTCString();
+    document.cookie = "uniqe" + "=" + encodeURIComponent(RESULT) + expires + "; path=/";
     try {
       let captcha_link = await fetch(`/captcha/`, {
           method: "POST",
@@ -116,12 +129,12 @@ async function setCaptcha() {
           "Content-Type": "application/json",
           'X-CSRFToken': csrftoken
           },
+          body: JSON.stringify({ uniqe: RESULT })
       });
-     
       let data = await captcha_link.json();
       console.log("Captcha data:", data.captcha_url);
 
-      captcha.innerHTML = `<img src="/static/captcha_imgs/${data.captcha_url}" alt="Captcha">`;
+      captcha.innerHTML = `<img class="captcha_img" src="/static/captcha_imgs/${data.captcha_url}" alt="Captcha"><input name="uniqe" type="hidden" value="${RESULT}">`;
 
     }
     catch (error) {

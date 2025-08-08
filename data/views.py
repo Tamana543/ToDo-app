@@ -1,10 +1,11 @@
 from django.shortcuts import render, HttpResponse, redirect
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from captchaSaz import *
 from rest_framework.views import APIView
+from django.core.cache import cache
 from django.contrib import auth
 from .models import Todo
+from captchaSaz import *
 import time
 import json
 import os
@@ -15,16 +16,22 @@ def mainpage_r(request):
     if request.user.is_authenticated:
         user = request.user
         todoThings = Todo.objects.filter(user=user)[::-1]
-        print(todoThings)
     return render(request, 'index.html', {"todoThings": todoThings})
 
 def signup(request):
-    print(1)
     if request.method == 'POST':
+        captcha_id = request.POST.get('uniqe')
+        captcha_usr = request.POST.get('captcha')
+        
+        captcha = cache.get(captcha_id)
+        if check(captcha[0], captcha_usr):
+            os.remove(captcha[1])
+            cache.delete(captcha_id)
+        else :
+            return HttpResponse("Wrong captcha try again")
+        
         username = request.POST.get('username')
         password = request.POST.get('password')
-        print(username, password)
-
         try:
             user = User.objects.get(username=username)
             if user.check_password(password):
@@ -42,7 +49,6 @@ def signin(request):
     if request.method == "POST":
         user = auth.authenticate(username=request.POST['username'], 
                                 password=request.POST['password']) 
-        print(user)
         if user is not None :
             auth.login(request, user)
             return redirect('home')
@@ -73,14 +79,13 @@ class checked(APIView):
     
 class captcha(APIView):
     def post(self, request):
-        for dirpath, dirnames, filenames in os.walk("./static/captcha_imgs/"):
-            for filename in filenames:
-                os.remove(dirpath + filename)
         if not request.user.is_authenticated:
             captcha_img, captcha_txt = generate()
             tt = str(time.time()).replace('.', '')
-            print(tt)
-            captcha_img.save(f"./static/captcha_imgs/captcha-{tt}.jpg")
+            uniqe = request.data.get("uniqe")
+            captcha_path = f"./static/captcha_imgs/captcha-{tt}.jpg"
+            cache.set(uniqe, [captcha_txt, captcha_path], timeout=300)
+            captcha_img.save(captcha_path)
             
             return Response({"status": 202, "captcha_url": f"captcha-{tt}.jpg"})
         return Response({"status": 403})

@@ -1,2 +1,3 @@
 djangorestframework
-captchaSaz
+captchaSaz>=2.0.4
+redis>=4.0.2

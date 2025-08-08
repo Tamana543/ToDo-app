@@ -22,7 +22,7 @@
       </div>
       {% endif %}
       <h1>Your List</h1>
-      <input type="text" id="taskInput" placeholder="Add a new task" onkeydown="if (event.key == 'Enter'){upload()}" />
+      <input type="text" id="taskInput" placeholder="Add a new task" onkeydown="if (event.key == 'Enter'){upload()}" required/>
       <button onclick="upload()">Add Task </button>
       <ul id="taskList">
         {% for task in todoThings %}
@@ -64,10 +64,6 @@
         </div>
         <div class="last_name flex">
             <label for="password" class="last_name-label">Password</label>
-            <input type="password" name="password" id="password" required />
-        </div>
-        <div class="last_name flex">
-            <label for="password" class="last_name-label">password again</label>
             <input type="password" name="password" id="password" required />
         </div>
         <div>
