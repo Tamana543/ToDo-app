@@ -1,7 +1,9 @@
+from apscheduler.schedulers.background import BackgroundScheduler
 from django.shortcuts import render, HttpResponse, redirect
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
+from datetime import datetime, timedelta
 from django.core.cache import cache
 from django.contrib import auth
 from .models import Todo
@@ -9,6 +11,14 @@ from captchaSaz import *
 import time
 import json
 import os
+
+# run the scheduler in background
+scheduler = BackgroundScheduler()
+scheduler.start()
+
+def delete_captcha_path(path):
+    os.remove(path)
+
 
 def mainpage_r(request):
     captcha_img, captcha_txt = generate()
@@ -25,7 +35,7 @@ def signup(request):
         
         captcha = cache.get(captcha_id)
         if check(captcha[0], captcha_usr):
-            os.remove(captcha[1])
+            delete_captcha_path(captcha[1])
             cache.delete(captcha_id)
         else :
             return HttpResponse("Wrong captcha try again")
@@ -86,6 +96,11 @@ class captcha(APIView):
             captcha_path = f"./static/captcha_imgs/captcha-{tt}.jpg"
             cache.set(uniqe, [captcha_txt, captcha_path], timeout=300)
             captcha_img.save(captcha_path)
+            
+            global scheduler 
+            run_time = datetime.now() + timedelta(seconds=315)
+            scheduler.add_job(delete_captcha_path, 'date', run_date=run_time, args=[captcha_path])
+            
             
             return Response({"status": 202, "captcha_url": f"captcha-{tt}.jpg"})
         return Response({"status": 403})
