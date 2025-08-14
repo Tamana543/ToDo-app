@@ -105,6 +105,31 @@ async function checked(element) {
   that_task.parentElement.removeChild(that_task);
 };
 
+async function subtask(element) {
+  const that_task = document.getElementById(element.value)
+  if (isAuthenticated == "true"){
+    try {
+      let response = await fetch(`/subtask/`, {
+          method: "POST",
+          headers: {
+          "Content-Type": "application/json",
+          'X-CSRFToken': csrftoken
+          },
+          body: JSON.stringify({ task: that_task.id }),
+      });
+    } 
+    catch (error) {
+      isAuthenticated = false;
+      console.error("Error sending data:", error);
+    }
+  }
+  else if (isAuthenticated == "false"){
+    console.log("local subtask saving");
+  }
+  // that_task.parentElement.appendChild(that_task);
+};
+
+
 async function setCaptcha() {
   console.log(1);
   if (isAuthenticated == "false"){

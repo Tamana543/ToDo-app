@@ -28,6 +28,7 @@
         {% for task in todoThings %}
           <li id="{{ forloop.counter }}" name="{{ task.id }}">{{ task.name }}
             <button onclick="checked(this)" class="done" value="{{ forloop.counter }}">√</button>
+            <button onclick="subtask(this)" class="subtask" value="{{ forloop.counter }}">+</button>
           </li>
         {% endfor %} 
       </ul>

@@ -23,6 +23,7 @@ urlpatterns = [
     path('signup/', views.signup, name="signup"),
     path('submit/', views.submit.as_view(), name="todo_create"),
     path('done/', views.checked.as_view(), name="todo_checked"),
+    path('subtask/', views.Subtask.as_view(), name="subtask"),
     path('captcha/', views.captcha.as_view(), name="captcha")
     
 ] 

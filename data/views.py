@@ -90,7 +90,7 @@ class checked(APIView):
 class captcha(APIView):
     def post(self, request):
         if not request.user.is_authenticated:
-            captcha_img, captcha_txt = generate()
+            captcha_img, captcha_txt = generate(text=randomText(length=5, uppercase_char=False, lowercase_char=False, number=True))
             tt = str(time.time()).replace('.', '')
             uniqe = request.data.get("uniqe")
             captcha_path = f"./static/captcha_imgs/captcha-{tt}.jpg"
@@ -105,3 +105,6 @@ class captcha(APIView):
             return Response({"status": 202, "captcha_url": f"captcha-{tt}.jpg"})
         return Response({"status": 403})
     
+class Subtask(APIView):
+    def post(self, request):
+        print("of")

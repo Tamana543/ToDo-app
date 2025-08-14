@@ -38,6 +38,18 @@ body {
     width: 92%;
     height: 8vh;
   }
+
+  .captchainput {
+    text-align: center;
+    width: 18vw;
+    font-size: 1.2rem;
+    border: none;
+    border-bottom: 2px solid #ddd;
+    outline: none;
+    padding: 0 10px;
+    letter-spacing: 8px;
+    transition: border-bottom-color 0.3s;
+  }
   
   button {
     padding: 10px 20px;
@@ -53,6 +65,10 @@ body {
     color: #000;
   }
   
+  .subtask {
+    margin-left: 70%;
+  }
+
   ul {
     list-style-type: none;
     padding: 1.5rem;
